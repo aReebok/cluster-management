@@ -1,0 +1,43 @@
+SIZE NAME                              TYPE
+931.5G sda                               disk
+ 59.6G │ └─md0                           raid1
+871.8G   └─md1                           raid1
+  1.8T sdb                               disk
+   50G   ├─vmpool-hipercic--devel        lvm
+   50G   ├─vmpool-hipercic--test         lvm
+  250G   ├─vmpool-mist--home             lvm
+   50G   ├─vmpool-mist--root             lvm
+   10G   ├─vmpool-mist--swap             lvm
+   20G   ├─vmpool-webserver              lvm
+    5G   ├─vmpool-webserver--swap        lvm
+  260G   ├─vmpool-csinparallel           lvm
+   50G   ├─vmpool-shibboleth             lvm
+  250G   ├─vmpool-cumulus                lvm
+    1T   ├─vmpool-rstudio                lvm
+   50G   ├─vmpool-hipercic               lvm
+   40G   ├─vmpool-cs--net                lvm
+  250G   ├─vmpool-cumulus--clone         lvm
+   66G   ├─vmpool-stogit-real            lvm
+   66G   │ ├─vmpool-stogit               lvm
+   64G   │ └─vmpool-stogit--disk--snap   lvm
+   10G   ├─vmpool-stogit--disk--snap-cow lvm
+   64G   │ └─vmpool-stogit--disk--snap   lvm
+   50G   ├─vmpool-pub--clone             lvm
+   56G   ├─vmpool-hipercic--clone        lvm
+  250G   ├─vmpool-cumulus--clone--1      lvm
+  500G   ├─vmpool-c--pdc                 lvm
+   40G   ├─vmpool-ldap--dummy            lvm
+   20G   ├─vmpool-stoc--machine          lvm
+   20G   └─vmpool-mca--node--js          lvm
+  3.7T sdc                               disk
+    1T   ├─vmpool-rstudio                lvm
+   40G   ├─vmpool-csinteractive          lvm
+  100G   ├─vmpool-ldap                   lvm
+  400G   ├─vmpool-ise                    lvm
+  500G   └─vmpool-c--pdc                 lvm
+  3.7T sdd                               disk
+  3.6T   └─datapool-data                 lvm
+931.5G sde                               disk
+ 59.6G │ └─md0                           raid1
+871.8G   └─md1                           raid1
+ 14.9G sdg                               disk
