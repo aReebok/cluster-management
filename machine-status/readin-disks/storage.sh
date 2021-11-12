@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#lsblk -o size,name,type | grep -v "part " | > storage2.txt
+#lsblk -bo size,name,type | grep -v " part" | grep -v " raid" && lsblk -o size | grep -v " part" | grep -v " raid"
 
 #cat storage2.txt
 count=0
@@ -27,11 +27,10 @@ do
         #echo $count "${array[-1]}"   # the type
         if [ "${array[-1]}" = "disk" ]
         then
-            # disk detected
+            # echo disk detected
             if [ $usage -eq 0 ] && [ "$diskname" = "" ]
             then
                 echo "Storage informaiton"
-
             else
                 #echo reached here ln 36
                 echo ${diskname} ----------- ${usage} / ${storage}
@@ -49,7 +48,7 @@ do
 
     (( count++ ))
 
-done < storage2.txt
+done < storage.txt
 
 echo ${diskname} ----------- ${usage} / ${storage} # prints out the final disk
 
