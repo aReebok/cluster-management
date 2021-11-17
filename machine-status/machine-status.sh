@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#DISK CAPACITY : CHECK THE ROOT 
+#CHECK ROOT DIRECTORY ON ITS OWN SECTION
+#
+
 #  print out date and time -----
 date
 
@@ -48,5 +52,6 @@ echo
 echo ----- ERROR LOGS ---------------------------------------------------------
 
 journalctl -xe | grep "failed\|failed:\|error\|fail"
+# CHECK FOR SERVICES
 
 echo ----- END OF PROGRAM -----------------------------------------------------
