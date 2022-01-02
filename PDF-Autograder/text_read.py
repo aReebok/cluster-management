@@ -4,13 +4,19 @@ import requests
 import io
 import json
 
-img = cv2.imread("result.jpg")
+img = cv2.imread("ROI_0.png")
 _, compressedimage = cv2.imencode('.jpg', img, [1, 90])
 file_bytes = io.BytesIO(compressedimage)
+
 #OCR API 
 url_api = "https://api.ocr.space/parse/image"
 
-result = requests.post(url_api, files={"result.jpg": file_bytes}, data={"apikey": "XXXX"})
+with open('ocr_api_key', 'r') as file:
+    ocr_api_key = file.read().rstrip()
+
+# print (ocr_api_key)
+
+result = requests.post(url_api, files={"ROI_0.png": file_bytes}, data={"apikey": ocr_api_key})
 
 result = result.content.decode()
 

@@ -7,6 +7,10 @@ import pytesseract
 from PIL import Image
 
 START_DIR = os.getcwd()
+image_number = 0
+
+lines = 1
+
 
 # methods definitions
 def pgcount_to_string (count):
@@ -21,8 +25,12 @@ def deldir(dir):
     if os.path.exists(dir) and os.path.isdir(dir):
         shutil.rmtree(dir)
 
-def cut_rectangle(page, pdf_name):
-    os.chdir(pdf_name)
+def img_to_text(img):
+    
+    return 0
+
+def cut_rectangle(page):
+    global image_number
 
     image = cv2.imread(page)
     original = image.copy()
@@ -33,7 +41,6 @@ def cut_rectangle(page, pdf_name):
     cnts = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if len(cnts) == 2 else cnts[1]
 
-    image_number = 0
     min_area = 10000
     for c in cnts:
         area = cv2.contourArea(c)
@@ -46,7 +53,7 @@ def cut_rectangle(page, pdf_name):
             
     cv2.waitKey(0)
 
-    os.chdir("..")
+    os.remove(page)
     return 0
 
 def ROI_edit(img_name):
@@ -57,17 +64,23 @@ def ROI_edit(img_name):
     lower = np.array([154, 50, 50], dtype="uint8")
     upper = np.array([175, 255, 255], dtype="uint8")
     mask = cv2.inRange(image, lower, upper)
-
+    
     cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     cnts = cnts[0] if len(cnts) == 2 else cnts[1]
     cv2.fillPoly(mask, cnts, (255,255,255))
-    result = cv2.bitwise_and(original,original,mask=mask)
+    mask = cv2.bitwise_not(mask)  # revert mask to original
+
+    colored = original.copy()
+    colored[mask == 255] = (255,255,255)
+    result = colored
 
     if cv2.countNonZero(mask) > 1:
-        print("PURPLE IS PRESENT!")
+        # print("PURPLE IS PRESENT!")
         cv2.imwrite(img_name, result)
+        cut_rectangle(img_name)
 
-    cv2.waitKey()
+
+    cv2.waitKey(0)
     return 0
     
 
@@ -94,6 +107,8 @@ def pdf_to_jpg(pdf_name):
 def main():
     pdf_name = 'lab6.pdf'
     pdf_to_jpg(pdf_name) 
+
+    # cut_rectangle('out_05.jpg')
     return 0
 
 
