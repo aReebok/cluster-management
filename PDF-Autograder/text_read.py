@@ -4,7 +4,7 @@ import requests
 import io
 import json
 
-img = cv2.imread("ROI_0.png")
+img = cv2.imread("ROI_10.png")
 _, compressedimage = cv2.imencode('.jpg', img, [1, 90])
 file_bytes = io.BytesIO(compressedimage)
 
@@ -16,7 +16,7 @@ with open('ocr_api_key', 'r') as file:
 
 # print (ocr_api_key)
 
-result = requests.post(url_api, files={"ROI_0.png": file_bytes}, data={"apikey": ocr_api_key})
+result = requests.post(url_api, files={"ROI_10.png": file_bytes}, data={"apikey": ocr_api_key})
 
 result = result.content.decode()
 

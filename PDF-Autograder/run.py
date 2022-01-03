@@ -4,13 +4,16 @@ import os
 import shutil
 from pdf2image import convert_from_path    # should also get poppler (choco install poppler)
 import pytesseract
-from PIL import Image
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+
+import requests
+import io
+import json
 
 START_DIR = os.getcwd()
 image_number = 0
 
 lines = 1
-
 
 # methods definitions
 def pgcount_to_string (count):
@@ -25,8 +28,34 @@ def deldir(dir):
     if os.path.exists(dir) and os.path.isdir(dir):
         shutil.rmtree(dir)
 
-def img_to_text(img):
+def img_to_text():
+    # soln_count = 0
+    # for filename in os.listdir():
+    #     if filename.endswith(".png"):
+
+    img = cv2.imread(filename)
+    _, compressedimage = cv2.imencode('.jpg', img, [1, 90])
+    file_bytes = io.BytesIO(compressedimage)
+
+    #OCR API 
+    url_api = "https://api.ocr.space/parse/image"
+
+    with open('../ocr_api_key', 'r') as file:
+        ocr_api_key = file.read().rstrip()
+
+    result = requests.post(url_api, files={"ROI_0.png": file_bytes}, data={"apikey": ocr_api_key})
+
+    result = result.content.decode()
+
+    result = json.loads(result)
+    text_detected = result.get("ParsedResults")[0].get("ParsedText")
+    print(text_detected)
+
+        # else:
+        #     continue
     
+    os.chdir("..")
+
     return 0
 
 def cut_rectangle(page):
@@ -48,12 +77,40 @@ def cut_rectangle(page):
             x,y,w,h = cv2.boundingRect(c)
             cv2.rectangle(image, (x, y), (x + w, y + h), (36,255,12), 2)
             ROI = original[y:y+h, x:x+w]
-            cv2.imwrite("ROI_{}.png".format(image_number), ROI)
+            # cv2.imwrite("ROI_{}.png".format(pgcount_to_string(image_number)), ROI)
+
+            text = pytesseract.image_to_string(ROI, lang='eng', config='--psm 3' )
+
+            if len(text.strip(" ")) == 0:
+                '''
+                 pytesseract is unable to scan this box for some reason...
+                 we will send it to OCR API 
+                '''
+                cv2.imwrite("retry.jpg", ROI)
+                img = cv2.imread("retry.jpg")
+                _, compressedimage = cv2.imencode('.jpg', img, [1, 90])
+                file_bytes = io.BytesIO(compressedimage)
+
+                #OCR API 
+                url_api = "https://api.ocr.space/parse/image"
+
+                with open('../ocr_api_key', 'r') as file:
+                    ocr_api_key = file.read().rstrip()
+                result = requests.post(url_api, files={"username.jpg": file_bytes}, data={"apikey": ocr_api_key})
+                result = result.content.decode()
+                result = json.loads(result)
+
+                text_detected = result.get("ParsedResults")[0].get("ParsedText")
+                text = text_detected
+
+            print("Response " + str(image_number) + ": " + text)
+            print("------------------------")
+
             image_number += 1
-            
     cv2.waitKey(0)
 
     os.remove(page)
+    # os.remove("temp.png")
     return 0
 
 def ROI_edit(img_name):
@@ -79,7 +136,6 @@ def ROI_edit(img_name):
         cv2.imwrite(img_name, result)
         cut_rectangle(img_name)
 
-
     cv2.waitKey(0)
     return 0
     
@@ -100,15 +156,19 @@ def pdf_to_jpg(pdf_name):
         ROI_edit(img_name)
         count += 1
         
-    os.chdir("..")
     return 0
 
-
-def main():
+def init():
     pdf_name = 'lab6.pdf'
     pdf_to_jpg(pdf_name) 
+    # img_to_text()
 
-    # cut_rectangle('out_05.jpg')
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    return 0
+
+def main():
+    init()
     return 0
 
 
